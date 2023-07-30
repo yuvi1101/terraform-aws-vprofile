@@ -60,11 +60,11 @@ variable "Zone1" {
 }
 
 variable "Zone2" {
-  default = "us-east-2a"
+  default = "us-east-1b"
 }
 
 variable "Zone3" {
-  default = "us-east-3a"
+  default = "us-east-1c"
 }
 
 variable "VpcCIDR" {
