@@ -1,32 +1,32 @@
 resource "aws_elastic_beanstalk_environment" "vprofile-bean-prod" {
-  name = "vprofile-bean-prod"
-  application = aws_elastic_beanstalk_application.vprofile-prod
-  solution_stack_name = "64bit Amazon Linux 2 v4.1.1 running Tomcat 8.5 Corretto 11"
-  cname_prefix = "vprofile-bean-prod-domain"
+  name                = "vprofile-bean-prod"
+  application         = aws_elastic_beanstalk_application.vprofile-prod.name
+  solution_stack_name = "64bit Amazon Linux 2 v4.3.10 running Tomcat 8.5 Corretto 11"
+  cname_prefix        = "vprofile-bean-prod-domain"
   setting {
-    name = "VPCId"
+    name      = "VPCId"
     namespace = "aws:ec2:vpc"
-    value = module.vpc.vpc_id
+    value     = module.vpc.vpc_id
   }
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
-    name ="IamInstanceProfile"
-    value = "aws-elasticbeanstalk-ec2-role"
+    name      = "IamInstanceProfile"
+    value     = "aws-elasticbeanstalk-ec2-role"
   }
   setting {
     namespace = "aws:ec2:vpc"
-    name = "AssociatePublicIpAddress"
-    value = "false"
+    name      = "AssociatePublicIpAddress"
+    value     = "false"
   }
   setting {
     namespace = "aws:ec2:vpc"
-    name = "Subnets"
-    value = join(",",[module.vpc.private_subnets[0],module.vpc.private_subnets[1],module.vpc.private_subnets[2]])
+    name      = "Subnets"
+    value     = join(",", [module.vpc.private_subnets[0], module.vpc.private_subnets[1], module.vpc.private_subnets[2]])
   }
   setting {
     namespace = "aws:ec2:vpc"
-    name = "ELBSubnets"
-    value = join(",",[module.vpc.public_subnets[0],module.vpc.public_subnets[1],module.vpc.public_subnets[2]])
+    name      = "ELBSubnets"
+    value     = join(",", [module.vpc.public_subnets[0], module.vpc.public_subnets[1], module.vpc.public_subnets[2]])
   }
   setting {
     name      = "aws:autoscaling:launchconfiguration"
@@ -38,80 +38,80 @@ resource "aws_elastic_beanstalk_environment" "vprofile-bean-prod" {
     namespace = "EC2KeyName"
     value     = "aws_key_pair.vprofilekey.key_name"
   }
-  setting{
+  setting {
     namespace = "aws:autoscaling:asg"
-    name = "Availability Zones"
-    value = "Any 3"
+    name      = "Availability Zones"
+    value     = "Any 3"
   }
-  setting{
+  setting {
     namespace = "aws:autoscaling:asg"
-    name = "MinSize"
-    value = "1"
+    name      = "MinSize"
+    value     = "1"
   }
-  setting{
+  setting {
     namespace = "aws:autoscaling:asg"
-    name = "MaxSize"
-    value = "8"
+    name      = "MaxSize"
+    value     = "8"
   }
-  setting{
+  setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name = "environment"
-    value = "prod"
+    name      = "environment"
+    value     = "prod"
   }
   setting {
     namespace = "aws:elasticbeanstalk:healthreporting:system"
-    name = "SystemType"
-    value = "enhanced"
+    name      = "SystemType"
+    value     = "enhanced"
   }
   setting {
     namespace = "aws:autoscaling:updatepolicy:rollingupdate"
-    name ="RollingUpdateEnabled"
-    value = "true"
+    name      = "RollingUpdateEnabled"
+    value     = "true"
   }
   setting {
     namespace = "aws:autoscaling:updatepolicy:rollingupdate"
-    name ="RollingUpdateEnabled"
-    value = "health"
+    name      = "RollingUpdateEnabled"
+    value     = "health"
   }
   setting {
     namespace = "aws:autoscaling:updatepolicy:rollingupdate"
-    name ="MaxBatchSize"
-    value = "1"
+    name      = "MaxBatchSize"
+    value     = "1"
   }
   setting {
     namespace = "aws:elb:loadbalancer"
-    name ="CrossZone"
-    value = "true"
+    name      = "CrossZone"
+    value     = "true"
   }
-  setting{
+  setting {
     namespace = "aws:elsticbeanstalk:environment:process:default"
-    name="SticknessEnabled"
-    value ="true"
+    name      = "SticknessEnabled"
+    value     = "true"
   }
-  setting{
+  setting {
     namespace = "aws:elsticbeanstalk:command"
-    name="BatchSizeType"
-    value ="Fixed"
+    name      = "BatchSizeType"
+    value     = "Fixed"
   }
-  setting{
+  setting {
     namespace = "aws:elsticbeanstalk:command"
-    name="BatchSize"
-    value ="1"
+    name      = "BatchSize"
+    value     = "1"
   }
-  setting{
+  setting {
     namespace = "aws:elsticbeanstalk:command"
-    name="DeploymentPolicy"
-    value ="Rolling"
+    name      = "DeploymentPolicy"
+    value     = "Rolling"
   }
-  setting{
+  setting {
     namespace = "aws:autoscaling:launchconfiguration"
-    name = "SecurityGroups"
-    value = aws_security_group.vprofile-prod-sg.id
+    name      = "SecurityGroups"
+    value     = aws_security_group.vprofile-prod-sg.id
   }
-  setting{
+  setting {
     namespace = "aws:autoscaling:launchconfiguration"
-    name = "SecurityGroups"
-    value = aws_security_group.vprofile-bean-elb-sg.id
+    name      = "SecurityGroups"
+    value     = aws_security_group.vprofile-bean-elb-sg.id
   }
-  depends_on = [aws_security_group.vprofile-bean-elb-sg,aws_security_group.vprofile-prod-sg]
+  depends_on = [aws_security_group.vprofile-bean-elb-sg, aws_security_group.vprofile-prod-sg]
 }
